@@ -14,6 +14,20 @@ An interactive simulation engine for evolving digital microorganisms, modeling g
 - Main UI: [digital_microorganism_evolution_engine.html](digital_microorganism_evolution_engine.html)
 - Local serve script: [serve.sh](serve.sh)
 
+## Screenshots
+
+### Simulator Main View
+
+![Simulator Main View](docs/screenshots/simulator_main_view.png)
+
+### Genotype Lab (Animal)
+
+![Genotype Lab Animal](docs/screenshots/genotype_lab_animal.png)
+
+### Genotype Lab (Plant)
+
+![Genotype Lab Plant](docs/screenshots/genotype_lab_plant.png)
+
 ## Quick Start
 
 1. Open [digital_microorganism_evolution_engine.html](digital_microorganism_evolution_engine.html) in a browser, or run [serve.sh](serve.sh).
