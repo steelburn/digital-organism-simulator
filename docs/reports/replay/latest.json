@@ -1,0 +1,35 @@
+{
+  "generatedAtIso": "2026-05-30T04:29:41.236Z",
+  "note": "Populate this report from seeded replay runs. This template is generated automatically.",
+  "reproducibilityDeclaration": {
+    "mode": "statistical",
+    "fixedDt": 1,
+    "seedSource": "CONFIG.MAP_SEED"
+  },
+  "scenarios": [
+    {
+      "name": "baseline-ecology",
+      "seed": 1337,
+      "runCount": 0,
+      "controlsSnapshot": {},
+      "metrics": {},
+      "pass": null
+    },
+    {
+      "name": "high-mutation",
+      "seed": 1337,
+      "runCount": 0,
+      "controlsSnapshot": {},
+      "metrics": {},
+      "pass": null
+    },
+    {
+      "name": "long-run-terrain-drift",
+      "seed": 1337,
+      "runCount": 0,
+      "controlsSnapshot": {},
+      "metrics": {},
+      "pass": null
+    }
+  ]
+}

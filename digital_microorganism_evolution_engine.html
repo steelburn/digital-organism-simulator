@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Microorganism Evolution Engine v1.2</title>
+    <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts for High-Tech feel -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Orbitron:wght@500;700;900&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        tech: ['Orbitron', 'sans-serif'],
+                        code: ['Fira Code', 'monospace'],
+                    },
+                    colors: {
+                        bioGreen: '#10b981',
+                        bioRed: '#ef4444',
+                        bioCyan: '#06b6d4',
+                        bioGold: '#f59e0b',
+                        bioDark: '#090d16',
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="./assets/css/app.css">
+</head>
+<body class="bg-[#05070c] text-slate-100 font-sans min-h-screen overflow-x-hidden antialiased">
+
+    <!-- Header Section -->
+    <header class="border-b border-slate-800 bg-[#090d16]/90 sticky top-0 z-50 px-6 py-3 flex justify-between items-center backdrop-blur-md">
+        <div class="flex items-center gap-3">
+            <div class="relative flex items-center justify-center w-10 h-10 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
+                <i class="fa-solid fa-microscope text-xl animate-pulse"></i>
+            </div>
+            <div>
+                <h1 class="font-tech text-lg font-bold tracking-wider text-emerald-400">DIGITAL MICROORGANISM SIMULATION</h1>
+                <p class="text-[10px] text-slate-400 font-code tracking-tight">ALIFE EVOLUTIONARY SANDBOX // VERSION 1.2 // HYDROMETRIC ANN NEURAL ENGINE</p>
+            </div>
+        </div>
+
+        <!-- Telemetry Summary -->
+        <div class="hidden md:flex items-center gap-6 text-xs font-code border-l border-slate-800 pl-6">
+            <div class="flex flex-col">
+                <span class="text-slate-500 text-[10px]">ORGANISMS</span>
+                <span id="stat-animals-count" class="font-bold text-cyan-400">0</span>
+            </div>
+            <div class="flex flex-col">
+                <span class="text-slate-500 text-[10px]">FLORA RANGE</span>
+                <span id="stat-plants-count" class="font-bold text-emerald-400">0</span>
+            </div>
+            <div class="flex flex-col">
+                <span class="text-slate-500 text-[10px]">DRIFT SPORES</span>
+                <span id="stat-spores-count" class="font-bold text-sky-400">0</span>
+            </div>
+            <div class="flex flex-col">
+                <span class="text-slate-500 text-[10px]">DECOMPOSITIONS</span>
+                <span id="stat-carcasses-count" class="font-bold text-amber-500">0</span>
+            </div>
+            <div class="flex flex-col">
+                <span class="text-slate-500 text-[10px]">ACTIVE LINEAGES</span>
+                <span id="stat-lineages-count" class="font-bold text-fuchsia-400">0</span>
+            </div>
+            <div class="flex flex-col">
+                <span class="text-slate-500 text-[10px]">TICKS</span>
+                <span id="stat-ticks-count" class="font-bold text-indigo-300">0</span>
+            </div>
+            <div class="flex flex-col">
+                <span class="text-slate-500 text-[10px]">REPRO MODE</span>
+                <span id="stat-repro-mode" class="font-bold text-cyan-300">STATISTICAL</span>
+            </div>
+            <div class="flex flex-col">
+                <span class="text-slate-500 text-[10px]">FIXED DT</span>
+                <span id="stat-fixed-dt" class="font-bold text-violet-300">1</span>
+            </div>
+        </div>
+
+        <!-- Core Simulation Engine Controls -->
+        <div class="flex items-center gap-2">
+            <button id="btn-pause" class="px-3 py-1.5 rounded bg-slate-800 hover:bg-slate-700 text-xs font-semibold flex items-center gap-2 transition-all">
+                <i class="fa-solid fa-play text-emerald-400" id="icon-play-state"></i> <span id="lbl-play-state">PLAY</span>
+            </button>
+            <button id="btn-step" class="px-3 py-1.5 rounded bg-slate-800 hover:bg-slate-700 text-xs font-semibold flex items-center gap-2 transition-all">
+                <i class="fa-solid fa-forward-step text-cyan-400"></i> STEP
+            </button>
+            <button id="btn-reset" class="px-3 py-1.5 rounded bg-rose-950/40 border border-rose-900/40 hover:bg-rose-900/40 text-xs font-semibold flex items-center gap-2 transition-all">
+                <i class="fa-solid fa-rotate-left text-rose-400"></i> RESET
+            </button>
+        </div>
+    </header>
+
+    <!-- Simulation Dashboard Grid -->
+    <div class="max-w-[1800px] mx-auto p-4 lg:p-6 grid grid-cols-1 xl:grid-cols-12 gap-6">
+
+        <!-- Column 1: Controls & Ribosome Translation Lab -->
+        <div class="xl:col-span-3 flex flex-col gap-6">
+            
+            <!-- System Controls Card -->
+            <div class="glass-panel p-5 rounded-xl flex flex-col gap-4">
+                <h2 class="font-tech text-xs font-bold text-slate-300 tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-sliders text-emerald-500"></i> ENVIRONMENT COEFFICIENTS
+                </h2>
+                
+                <div class="flex flex-col gap-3 text-xs">
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-slate-400">Simulation Speed</span>
+                            <span class="font-code text-emerald-400" id="val-speed-mult">1x</span>
+                        </div>
+                        <input type="range" id="slider-speed" min="1" max="8" value="1" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500">
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-slate-400">Flora Mutation Probability</span>
+                            <span class="font-code text-emerald-400" id="val-flora-mutation-rate">15%</span>
+                        </div>
+                        <input type="range" id="slider-flora-mutation-rate" min="0" max="100" value="15" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500">
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-slate-400">Fauna Mutation Probability</span>
+                            <span class="font-code text-cyan-400" id="val-fauna-mutation-rate">15%</span>
+                        </div>
+                        <input type="range" id="slider-fauna-mutation-rate" min="0" max="100" value="15" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-500">
+                    </div>
+
+                    <div class="flex items-center justify-between rounded border border-slate-800 bg-slate-900/60 px-2 py-1.5">
+                        <span class="text-slate-400">Link Flora/Fauna Mutation Rates</span>
+                        <label class="flex items-center gap-2 text-[11px] text-slate-300 cursor-pointer select-none">
+                            <input type="checkbox" id="toggle-link-mutation-rates" class="rounded bg-slate-800 border-slate-700 text-cyan-500 focus:ring-cyan-500/20">
+                            <span>Linked</span>
+                        </label>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-slate-400">Speciation Threshold (Max Delta)</span>
+                            <span class="font-code text-fuchsia-400" id="val-speciation-delta">1 Gene</span>
+                        </div>
+                        <input type="range" id="slider-speciation-delta" min="1" max="5" value="1" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-fuchsia-500">
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-slate-400">Baseline Plant Growth</span>
+                            <span class="font-code text-emerald-400" id="val-plant-growth">0.50</span>
+                        </div>
+                        <input type="range" id="slider-plant-growth" min="10" max="150" value="50" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500">
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-slate-400">Downward Soil Nutrient Erosion</span>
+                            <span class="font-code text-amber-500" id="val-erosion-factor">0.10</span>
+                        </div>
+                        <input type="range" id="slider-erosion" min="0" max="100" value="10" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-amber-500">
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-slate-400">World Width</span>
+                            <span class="font-code text-sky-400" id="val-world-width">2400</span>
+                        </div>
+                        <input type="range" id="slider-world-width" min="800" max="4800" step="100" value="2400" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-sky-500">
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-slate-400">World Height</span>
+                            <span class="font-code text-sky-400" id="val-world-height">1800</span>
+                        </div>
+                        <input type="range" id="slider-world-height" min="600" max="3600" step="100" value="1800" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-sky-500">
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-slate-400">Map Seed</span>
+                            <span class="font-code text-indigo-400" id="val-map-seed">1337</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <input type="number" id="input-map-seed" value="1337" min="0" max="4294967295" class="w-full h-8 px-2 rounded bg-slate-900 border border-slate-800 text-slate-200 font-code text-xs focus:outline-none focus:border-indigo-500" />
+                            <button id="btn-randomize-seed" class="h-8 px-2 rounded bg-indigo-600/20 border border-indigo-500/30 hover:bg-indigo-600/35 text-indigo-300 text-[10px] font-semibold tracking-wide">RANDOM</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-slate-400">Starter Plant Density (Per 10k Area)</span>
+                            <span class="font-code text-emerald-400" id="val-plant-density">0.833</span>
+                        </div>
+                        <input type="range" id="slider-plant-density" min="1" max="3000" value="833" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500">
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-slate-400">Minimum Starter Plants</span>
+                            <span class="font-code text-emerald-400" id="val-plant-min">140</span>
+                        </div>
+                        <input type="range" id="slider-plant-min" min="0" max="1000" value="140" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500">
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-slate-400">Plant-Only Headstart (Ticks)</span>
+                            <span class="font-code text-lime-400" id="val-plant-headstart">0</span>
+                        </div>
+                        <input type="range" id="slider-plant-headstart" min="0" max="2000" step="10" value="0" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-lime-500">
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-slate-400">Starter Fauna Density (Per 10k Area)</span>
+                            <span class="font-code text-cyan-400" id="val-fauna-density">0.051</span>
+                        </div>
+                        <input type="range" id="slider-fauna-density" min="1" max="120" value="51" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-500">
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-slate-400">Minimum Starter Fauna</span>
+                            <span class="font-code text-emerald-400" id="val-fauna-min">10</span>
+                        </div>
+                        <input type="range" id="slider-fauna-min" min="0" max="120" value="10" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500">
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-slate-400">Starter Predator Ratio</span>
+                            <span class="font-code text-rose-400" id="val-fauna-predator-ratio">25%</span>
+                        </div>
+                        <input type="range" id="slider-fauna-predator-ratio" min="0" max="100" value="25" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-rose-500">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Custom Genome Builder (Central Dogma) -->
+            <div class="glass-panel p-5 rounded-xl flex flex-col gap-4">
+                <div class="flex justify-between items-center">
+                    <h2 class="font-tech text-xs font-bold text-slate-300 tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-dna text-cyan-400"></i> GENOTYPE LAB & INJECTOR
+                    </h2>
+                    <span class="text-[9px] bg-cyan-950/60 text-cyan-400 border border-cyan-800/50 px-2 py-0.5 rounded font-code">TRANSLATION LAB</span>
+                </div>
+
+                <div class="text-xs text-slate-400">
+                    Build ordered DNA sequences for injection. Add genes in sequence order, keep duplicates, and import exact arrays like [0x10, 0x10, 0x9D, 0x8B].
+                </div>
+
+                <!-- Creature Selector -->
+                <div class="flex bg-slate-900 p-1 rounded border border-slate-800 text-xs">
+                    <button id="tab-lab-animal" class="flex-1 text-center py-1 rounded bg-slate-800 text-slate-100 font-semibold">Animal Agent</button>
+                    <button id="tab-lab-plant" class="flex-1 text-center py-1 rounded text-slate-400 hover:text-slate-200">Spore Plant</button>
+                </div>
+
+                <!-- Animal Gene Palette -->
+                <div id="genome-animal-list" class="flex flex-col gap-2">
+                    <div class="text-[10px] text-slate-500 font-semibold uppercase tracking-wider">Animal Gene Palette (Tap to append)</div>
+                    <div class="grid grid-cols-2 gap-1.5">
+                        <button data-gene="0x01" class="lab-gene-btn text-left text-xs text-slate-300 p-1.5 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800"><span class="font-code text-emerald-400 text-[10px]">0x01</span> Structural Optimization</button>
+                        <button data-gene="0x02" class="lab-gene-btn text-left text-xs text-slate-300 p-1.5 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800"><span class="font-code text-cyan-400 text-[10px]">0x02</span> Locomotion Index</button>
+                        <button data-gene="0x03" class="lab-gene-btn text-left text-xs text-slate-300 p-1.5 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800"><span class="font-code text-amber-400 text-[10px]">0x03</span> Herbivory Digestion</button>
+                        <button data-gene="0x04" class="lab-gene-btn text-left text-xs text-slate-300 p-1.5 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800"><span class="font-code text-indigo-400 text-[10px]">0x04</span> Sensor Range</button>
+                        <button data-gene="0x05" class="lab-gene-btn text-left text-xs text-slate-300 p-1.5 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800"><span class="font-code text-blue-400 text-[10px]">0x05</span> Speed Specialist</button>
+                        <button data-gene="0x06" class="lab-gene-btn text-left text-xs text-slate-300 p-1.5 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800"><span class="font-code text-violet-400 text-[10px]">0x06</span> Jitter Instability</button>
+                        <button data-gene="0x07" class="lab-gene-btn text-left text-xs text-slate-300 p-1.5 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800"><span class="font-code text-red-400 text-[10px]">0x07</span> Predation Arc</button>
+                        <button data-gene="0x08" class="lab-gene-btn text-left text-xs text-slate-300 p-1.5 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800"><span class="font-code text-lime-400 text-[10px]">0x08</span> Energy Saver</button>
+                        <button data-gene="0x0A" class="lab-gene-btn text-left text-xs text-slate-300 p-1.5 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800"><span class="font-code text-fuchsia-400 text-[10px]">0x0A</span> Thermal Insulation</button>
+                        <button data-gene="0x0E" class="lab-gene-btn text-left text-xs text-slate-300 p-1.5 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800"><span class="font-code text-rose-400 text-[10px]">0x0E</span> Plasticity Regulator</button>
+                        <button data-gene="0x1F" class="lab-gene-btn col-span-2 text-left text-xs text-slate-300 p-1.5 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800"><span class="font-code text-teal-400 text-[10px]">0x1F</span> Endosymbiosis</button>
+                    </div>
+                </div>
+
+                <!-- Plant Gene Palette -->
+                <div id="genome-plant-list" class="hidden flex flex-col gap-2">
+                    <div class="text-[10px] text-slate-500 font-semibold uppercase tracking-wider">Plant Gene Palette (Tap to append)</div>
+                    <div class="grid grid-cols-2 gap-1.5">
+                        <button data-gene="0x10" class="lab-gene-btn text-left text-xs text-slate-300 p-1.5 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800"><span class="font-code text-emerald-400 text-[10px]">0x10</span> Photosynthesis</button>
+                        <button data-gene="0x20" class="lab-gene-btn text-left text-xs text-slate-300 p-1.5 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800"><span class="font-code text-red-400 text-[10px]">0x20</span> Toxicity</button>
+                        <button data-gene="0x30" class="lab-gene-btn text-left text-xs text-slate-300 p-1.5 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800"><span class="font-code text-blue-400 text-[10px]">0x30</span> Dispersal Vector</button>
+                        <button data-gene="0x40" class="lab-gene-btn text-left text-xs text-slate-300 p-1.5 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800"><span class="font-code text-amber-400 text-[10px]">0x40</span> Succulence</button>
+                        <button data-gene="0x60" class="lab-gene-btn text-left text-xs text-slate-300 p-1.5 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800"><span class="font-code text-indigo-400 text-[10px]">0x60</span> Mulching</button>
+                        <button data-gene="0x6A" class="lab-gene-btn text-left text-xs text-slate-300 p-1.5 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800"><span class="font-code text-violet-400 text-[10px]">0x6A</span> Floating Coefficient</button>
+                        <button data-gene="0x7F" class="lab-gene-btn text-left text-xs text-slate-300 p-1.5 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800"><span class="font-code text-sky-400 text-[10px]">0x7F</span> Zoochory</button>
+                        <button data-gene="0x8B" class="lab-gene-btn text-left text-xs text-slate-300 p-1.5 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800"><span class="font-code text-purple-400 text-[10px]">0x8B</span> Stunted Seedling</button>
+                        <button data-gene="0x9C" class="lab-gene-btn text-left text-xs text-slate-300 p-1.5 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800"><span class="font-code text-lime-400 text-[10px]">0x9C</span> Clonal Growth</button>
+                        <button data-gene="0x9D" class="lab-gene-btn text-left text-xs text-slate-300 p-1.5 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800"><span class="font-code text-green-300 text-[10px]">0x9D</span> Clonal Aggression</button>
+                    </div>
+                </div>
+
+                <div class="rounded border border-slate-800 bg-slate-950/70 p-2.5 flex flex-col gap-2">
+                    <div class="flex items-center justify-between text-[11px]">
+                        <span class="text-slate-400">DNA Sequence (ordered)</span>
+                        <div class="flex gap-1.5">
+                            <button id="btn-seq-pop" class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800">Pop Last</button>
+                            <button id="btn-seq-clear" class="px-2 py-0.5 rounded bg-rose-950/40 border border-rose-800/40 text-rose-300 hover:bg-rose-900/40">Clear</button>
+                        </div>
+                    </div>
+                    <div id="sequence-editor-list" class="min-h-[56px] flex flex-wrap gap-1.5"></div>
+                    <div class="text-[10px] text-slate-500">Tip: click chip arrows to reorder, or X to delete individual genes.</div>
+                </div>
+
+                <div class="rounded border border-slate-800 bg-slate-950/70 p-2.5 flex flex-col gap-2">
+                    <label for="input-seq-text" class="text-[11px] text-slate-400">Paste DNA Array (hex or decimal)</label>
+                    <div class="flex gap-2">
+                        <input id="input-seq-text" type="text" class="w-full h-8 px-2 rounded bg-slate-900 border border-slate-800 text-slate-200 font-code text-xs focus:outline-none focus:border-cyan-500" placeholder="[0x10, 0x10, 0x9D, 0x8B]" />
+                        <button id="btn-seq-apply-text" class="h-8 px-2 rounded bg-cyan-600/20 border border-cyan-500/30 hover:bg-cyan-600/40 text-cyan-300 text-[10px] font-semibold tracking-wide">APPLY</button>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between border-t border-slate-800 pt-3 text-[11px] text-slate-400">
+                    <span>Generated Phenotype:</span>
+                    <span id="txt-generated-dna" class="font-code text-cyan-400">[0x01, 0x02, 0x03, 0x0E]</span>
+                </div>
+
+                <!-- Seed Selector Action -->
+                <button id="btn-arm-injector" class="w-full py-2 rounded-lg bg-cyan-600/20 border border-cyan-500/30 hover:bg-cyan-600/40 text-xs font-bold text-cyan-400 tracking-wider flex items-center justify-center gap-2 transition-all">
+                    <i class="fa-solid fa-syringe"></i> ARM LAB INJECTOR (TAP MAP TO SEED)
+                </button>
+            </div>
+        </div>
+
+        <!-- Column 2: Toroidal Simulation Viewport -->
+        <div class="xl:col-span-6 flex flex-col gap-6">
+            
+            <!-- Toroidal Viewport Map Grid -->
+            <div class="glass-panel p-4 rounded-xl flex flex-col gap-3 relative">
+                
+                <!-- Map Topbar controls -->
+                <div class="flex flex-wrap justify-between items-center gap-3">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-sky-400 animate-ping"></span>
+                        <h3 class="font-tech text-xs tracking-wider text-slate-300">TOROIDAL ECOSYSTEM VIEWPORT</h3>
+                    </div>
+
+                    <!-- Environment Map Overlays Filters -->
+                    <div class="flex flex-wrap bg-slate-900 p-0.5 rounded border border-slate-800 text-[11px]">
+                        <button id="filter-classic" class="px-2 py-1 rounded bg-slate-800 text-slate-100 font-semibold">Classic Biomes</button>
+                        <button id="filter-elevation" class="px-2 py-1 rounded text-slate-400 hover:text-slate-200">Elevation</button>
+                        <button id="filter-nutrients" class="px-2 py-1 rounded text-slate-400 hover:text-slate-200">Soil Nutrients</button>
+                        <button id="filter-moisture" class="px-2 py-1 rounded text-slate-400 hover:text-slate-200">Moisture / Hydrology</button>
+                    </div>
+                </div>
+
+                <!-- Real Viewport Canvas and Scanline effect wrapper -->
+                <div class="relative w-full overflow-hidden rounded-lg bg-bioDark border border-slate-800 flex items-center justify-center">
+                    <canvas id="simCanvas" width="2400" height="1800" class="w-full h-auto aspect-[4/3] block cursor-crosshair"></canvas>
+                    <!-- MAIN ENGINE IMPLEMENTATION -->
+                    <script type="module" src="./assets/js/ui.js"></script>
+                </div>
+            </div>
+        </div>
+
+        <!-- Column 3: Analytics, Inspector & AI Consultant -->
+        <div class="xl:col-span-3 flex flex-col gap-6">
+
+            <!-- Population Telemetry -->
+            <div class="glass-panel p-4 rounded-xl flex flex-col gap-3">
+                <h3 class="font-tech text-xs tracking-wider text-slate-300 flex items-center gap-2">
+                    <i class="fa-solid fa-chart-line text-cyan-400"></i> TELEMETRY STREAM
+                </h3>
+                <div class="rounded-lg border border-slate-800 bg-[#060a13] h-40 p-1">
+                    <canvas id="telemetryCanvas" class="w-full h-full block"></canvas>
+                </div>
+                <div class="grid grid-cols-2 gap-1 text-[10px] font-code text-slate-500">
+                    <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-cyan-400"></span>Animals</div>
+                    <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-400"></span>Plants</div>
+                    <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-sky-400"></span>Spores</div>
+                    <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-amber-500"></span>Carcasses</div>
+                </div>
+            </div>
+
+            <!-- Phylogeny Tree + Inspector -->
+            <div class="glass-panel p-4 rounded-xl flex flex-col gap-3">
+                <div class="flex items-center gap-2 border-b border-slate-800">
+                    <button id="tab-btn-tree" class="flex-1 text-center pb-2 border-b-2 border-emerald-500 text-xs font-tech font-bold text-slate-100">PHYLOGENY TREE</button>
+                    <button id="tab-btn-inspector" class="flex-1 text-center pb-2 text-xs font-tech font-bold text-slate-400 hover:text-slate-200">INSPECTOR &amp; BRAIN</button>
+                </div>
+
+                <div id="tab-content-tree" class="flex flex-col gap-3">
+                    <div class="rounded-lg border border-slate-800 bg-[#060a13] h-44 p-1">
+                        <canvas id="phylogenyCanvas" class="w-full h-full block"></canvas>
+                    </div>
+                    <div class="border border-slate-800 rounded-lg overflow-hidden">
+                        <table class="w-full text-[10px]">
+                            <thead class="bg-slate-900 text-slate-400 font-code">
+                                <tr>
+                                    <th class="p-1.5 text-left">Lineage</th>
+                                    <th class="p-1.5 text-left">Gen</th>
+                                    <th class="p-1.5 text-left">Pop</th>
+                                    <th class="p-1.5 text-left">DNA</th>
+                                </tr>
+                            </thead>
+                            <tbody id="lineage-table-body" class="text-slate-200"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="tab-content-inspector" class="hidden flex flex-col gap-3">
+                    <div id="inspector-placeholder" class="rounded-lg border border-slate-800 bg-slate-900/60 p-3 text-[11px] text-slate-500">
+                        Double-click an organism in the viewport or click a lineage row to inspect organism internals.
+                    </div>
+
+                    <div id="inspector-data" class="hidden flex flex-col gap-2.5">
+                        <div class="flex items-center justify-between">
+                            <div id="inspect-name" class="text-xs font-semibold text-slate-100">-</div>
+                            <span id="inspect-type-badge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-900 text-slate-400 border border-slate-800">Unknown</span>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2 text-[10px] font-code">
+                            <div class="rounded bg-slate-900 border border-slate-800 p-1.5 text-slate-400">Lineage: <span id="inspect-lineage-val" class="text-slate-100">-</span></div>
+                            <div class="rounded bg-slate-900 border border-slate-800 p-1.5 text-slate-400">Energy: <span id="inspect-energy-val" class="text-emerald-400">-</span></div>
+                            <div class="rounded bg-slate-900 border border-slate-800 p-1.5 text-slate-400">Health: <span id="inspect-health-val" class="text-cyan-400">-</span></div>
+                            <div class="rounded bg-slate-900 border border-slate-800 p-1.5 text-slate-400">Speed: <span id="inspect-speed-val" class="text-amber-400">-</span></div>
+                            <div class="rounded bg-slate-900 border border-slate-800 p-1.5 text-slate-400">Sensors: <span id="inspect-sensor-val" class="text-indigo-400">-</span></div>
+                            <div class="rounded bg-slate-900 border border-slate-800 p-1.5 text-slate-400">Pathogen: <span id="inspect-virus-val" class="text-rose-400">-</span></div>
+                            <div class="rounded bg-slate-900 border border-slate-800 p-1.5 text-slate-400">Energy Saver: <span id="inspect-energy-save-val" class="text-lime-400">-</span></div>
+                        </div>
+
+                        <div>
+                            <div class="text-[10px] text-slate-500 font-code mb-1">DNA Sequence</div>
+                            <div id="inspect-dna-chips" class="flex flex-wrap gap-1"></div>
+                        </div>
+
+                        <div id="neural-view-wrapper" class="hidden">
+                            <div class="text-[10px] text-slate-500 font-code mb-1">Neural Brain Map</div>
+                            <div class="rounded-lg border border-slate-800 bg-[#060a13] h-36 p-1">
+                                <canvas id="brainCanvas" class="w-full h-full block"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Ecosystem Consultant -->
+            <div class="glass-panel p-4 rounded-xl flex flex-col gap-3">
+                <div class="flex items-center justify-between gap-2">
+                    <h3 class="font-tech text-xs tracking-wider text-slate-300 flex items-center gap-2">
+                        <i class="fa-solid fa-brain text-fuchsia-400"></i> AI ECOSYSTEM CONSULTANT
+                    </h3>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 text-[10px]">
+                    <button class="ai-quick-btn px-2 py-1 rounded bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-300" data-prompt="soil-assessment">Soil Assessment</button>
+                    <button class="ai-quick-btn px-2 py-1 rounded bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-300" data-prompt="genocide-check">Extinction Risk</button>
+                    <button class="ai-quick-btn px-2 py-1 rounded bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-300" data-prompt="suggest-balancer">Suggest Balancer</button>
+                    <button class="ai-quick-btn px-2 py-1 rounded bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-300" data-prompt="design-mutant">Design Mutant</button>
+                </div>
+
+                <div id="ai-chat-buffer" class="h-40 overflow-y-auto rounded-lg border border-slate-800 bg-[#060a13] p-2 text-[11px] flex flex-col gap-2"></div>
+
+                <div class="flex gap-2">
+                    <input id="ai-input" type="text" placeholder="Ask about ecosystem dynamics..." class="flex-1 px-2 py-1.5 rounded bg-slate-900 border border-slate-800 text-[11px] text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-fuchsia-700" />
+                    <button id="ai-send-btn" class="px-3 py-1.5 rounded bg-fuchsia-700 hover:bg-fuchsia-600 text-white text-[11px] font-semibold">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container" class="fixed bottom-4 right-4 z-[60] flex flex-col gap-2 pointer-events-none"></div>
+</body>
+</html>

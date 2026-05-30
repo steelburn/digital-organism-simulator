@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-label="Digital Microorganism">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#020617" />
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="12" fill="url(#bg)" />
+  <circle cx="32" cy="32" r="17" fill="#064e3b" stroke="#10b981" stroke-width="3" />
+  <circle cx="25" cy="27" r="3" fill="#22d3ee" />
+  <circle cx="38" cy="30" r="2.6" fill="#34d399" />
+  <circle cx="33" cy="39" r="2.3" fill="#a7f3d0" />
+  <path d="M11 18 C6 12, 6 7, 12 6" fill="none" stroke="#22d3ee" stroke-width="2" stroke-linecap="round" />
+  <path d="M53 46 C58 52, 58 57, 52 58" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" />
+</svg>
